@@ -1,5 +1,6 @@
 from lib import *
 from config import *
+from mycode import *
 
 class VGG(nn.Module):
     def __init__(self, conv_arch, num_classes=10, in_channels=1):
@@ -7,32 +8,33 @@ class VGG(nn.Module):
 
         self.conv_blks = self._make_conv_layers(conv_arch, in_channels)
 
-        self.fc = nn.Sequential(
-            nn.Flatten(),
-            nn.Linear(conv_arch[-1][1]*7*7, 4096),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(4096, 4096),
-            nn.ReLU(),
-            nn.Dropout(0.5),
-            nn.Linear(4096, num_classes)
+        self.fc = Sequential(
+            Flatten(),
+            Linear(512 * 7 * 7, 4096),  # Fully connected layer
+            ReLU(),  # Activation
+            # Dropout(0.5),  # Dropout
+            Linear(4096, 4096),  # Fully connected layer
+            ReLU(),  # Activation
+            # Dropout(0.5),  # Dropout
+            Linear(4096, num_classes)  # Output layer
         )
+
 
     def _vgg_block(self, num_convs, in_channels, out_channels):
         layers = []
         for _ in range(num_convs):
-            layers.append(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1))
-            layers.append(nn.ReLU())
+            layers.append(Conv2D(in_channels, out_channels, kernel_size=3, padding=1))
+            layers.append(ReLU())
             in_channels = out_channels
-        layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
-        return nn.Sequential(*layers)
+        layers.append(MaxPool2D(kernel_size=2, stride=2))
+        return Sequential(*layers)
 
     def _make_conv_layers(self, conv_arch, in_channels):
         layers = []
         for num_convs, out_channels in conv_arch:
             layers.append(self._vgg_block(num_convs, in_channels, out_channels))
             in_channels = out_channels
-        return nn.Sequential(*layers)
+        return Sequential(*layers)
 
     def forward(self, x):
         x = self.conv_blks(x)
@@ -110,11 +112,38 @@ class ResNet(nn.Module):
 
 if __name__ == "__main__":
     x = torch.rand(1, 1, 224, 224)
+    #
+    # conv_arch = ((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))
+    # vggnet = VGG(conv_arch)
+    # resnet = ResNet()
+    #
+    # output = vggnet(x)
+    # print(output.shape)
+    # Số lớp và đầu ra
 
-    conv_arch = ((1, 64), (1, 128), (2, 256), (2, 512), (2, 512))
-    vggnet = VGG(conv_arch)
-    resnet = ResNet()
-    
-    output = vggnet(x)
-    print(output.shape)
+    # num_classes = 10
+    # model = Sequential(
+    #     Flatten(),
+    #     Linear(512 * 7 * 7, 4096),  # Fully connected layer
+    #     ReLU(),  # Activation
+    #     Dropout(0.5),  # Dropout
+    #     Linear(4096, 4096),  # Fully connected layer
+    #     ReLU(),  # Activation
+    #     Dropout(0.5),  # Dropout
+    #     Linear(4096, num_classes)  # Output layer
+    # )
+    #
+    # # Tạo dữ liệu đầu vào giả
+    # x = np.random.randn(32, 512, 7, 7)  # Batch size 32, đầu vào 512x7x7
+    #
+    # # Forward pass
+    # x = model.forward(x.reshape(x.shape[0], -1))  # Flatten batch
+    # print("Output shape:", x.shape)  # Kết quả sẽ là (32, num_classes)
+    #
+    # # Tạo gradient giả
+    # grad_output = np.random.randn(32, num_classes)
+    #
+    # # Backward pass
+    # model.backward(grad_output, learning_rate=0.001)
+
 

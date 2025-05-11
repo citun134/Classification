@@ -4,10 +4,16 @@ from config import *
 from data import *
 import timm
 from PIL import Image, ImageDraw, ImageFont
+from torchvision.models import resnet50, ResNet50_Weights
+import torchvision
+
+
 
 class_index = ["abnormal", "normal"]
 # save_path = r"D:\PyCharm\pythonProject\Classification\model\efficientnet\model_efficientnet_9_11.pth"
-save_path = r"D:\PyCharm\pythonProject\Classification\model\mobilenet\model_mobilenet_8_11.pth"
+# save_path = r"D:\PyCharm\pythonProject\Classification\model\mobilenet\model_mobilenet_8_11.pth"
+save_path = r"E:\code\Classification\model\model_restnet_13_12.pth"
+
 
 class Predictor():
     def __init__(self, class_index):
@@ -26,9 +32,9 @@ def load_model(net, model_path):
 
 def predict(img):
     #prepare net
-    use_pretrained = True
-    net = models.mobilenet_v3_large(use_pretrained=use_pretrained)
-    net.classifier[3] = nn.Linear(in_features=1280, out_features=2)
+    # use_pretrained = True
+    # net = models.mobilenet_v3_large(use_pretrained=use_pretrained)
+    # net.classifier[3] = nn.Linear(in_features=1280, out_features=2)
 
     # NUM_CLASSES = 2
     #
@@ -42,6 +48,13 @@ def predict(img):
     #         return self.effnet(x)
     #
     # net = EfficientNet_V2(NUM_CLASSES)
+
+    use_pretrained = torchvision.models.ResNet50_Weights.IMAGENET1K_V2
+    net = models.resnet50(weights=use_pretrained)
+
+    in_features = net.fc.in_features
+    net.fc = nn.Linear(in_features, 2)
+
     net.eval()
     with torch.no_grad():
 

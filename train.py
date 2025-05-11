@@ -8,6 +8,7 @@ import torch.utils.data as data
 from torchvision import models
 from datetime import datetime
 from utils import *
+from mycode import *
 
 
 n_workers = os.cpu_count()
@@ -38,13 +39,18 @@ print(labels)
 # model
 # model = VGG(conv_arch, 2, 3).to(device)
 
+
 # use_pretrained = True
 # model = models.mobilenet_v3_large(use_pretrained=use_pretrained)
 
+
 use_pretrained = "ResNet50_Weights.IMAGENET1K_V2"
 model = models.resnet50(use_pretrained=use_pretrained)
-
 model.classifier[3] = nn.Linear(in_features=1280, out_features=2)
+
+
+
+
 
 # loss
 criterion = nn.CrossEntropyLoss()

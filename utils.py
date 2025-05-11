@@ -44,6 +44,10 @@ def train_model(net, dataloader_dict, criterion, optimizer, num_epochs):
 
                 with torch.set_grad_enabled(phase == "train"):
                     outputs = net(inputs)
+
+                    outputs = torch.tensor(outputs, dtype=torch.float32)
+                    labels = torch.tensor(labels, dtype=torch.long)
+
                     loss = criterion(outputs, labels)
                     _, preds = torch.max(outputs, 1)
 

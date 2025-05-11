@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Đọc dữ liệu từ file CSV
-df = pd.read_csv(r'D:\PyCharm\pythonProject\Classification\model\mobilenet\training_results.csv')
+df = pd.read_csv(r'E:\code\Classification\model\test_restnet_13_11_2024.csv')
 
 # Lọc dữ liệu cho các phase 'train' và 'val'
 train_df = df[df['phase'] == 'train']
