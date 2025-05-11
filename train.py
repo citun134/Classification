@@ -9,6 +9,7 @@ from torchvision import models
 from datetime import datetime
 from utils import *
 from mycode import *
+from torchvision.models import ResNet50_Weights
 
 
 n_workers = os.cpu_count()
@@ -44,10 +45,13 @@ print(labels)
 # model = models.mobilenet_v3_large(use_pretrained=use_pretrained)
 
 
-use_pretrained = "ResNet50_Weights.IMAGENET1K_V2"
-model = models.resnet50(use_pretrained=use_pretrained)
-model.classifier[3] = nn.Linear(in_features=1280, out_features=2)
+# use_pretrained = ResNet50_Weights.IMAGENET1K_V2
+# model = models.resnet50(use_pretrained=use_pretrained)
+# model.classifier[3] = nn.Linear(in_features=1280, out_features=2)
 
+use_pretrained = True
+net = models.resnet50(weights=models.ResNet50_Weights.IMAGENET1K_V1 if use_pretrained else None)
+net.fc = nn.Linear(in_features=2048, out_features=2)
 
 
 

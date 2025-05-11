@@ -92,25 +92,43 @@ class MyDataset(data.Dataset):
 
     def __getitem__(self, idx):
         img_path = self.file_list[idx]
-        img = Image.open(img_path)
+        img = Image.open(img_path).convert("RGB")  # Đảm bảo luôn là ảnh RGB
 
         img_transformed = self.transform(img, self.phase)
 
-        if self.phase == "train":
-            label = img_path.split("\\")[-2]
-            # print(f"label train:{label}")
-        elif self.phase == "val":
-            label = img_path.split("\\")[-2]
-        elif self.phase == "test":
-            label = img_path.split("\\")[-2]
-            # print(f"label train:{label}")
+        # Lấy tên thư mục cha làm label (tương thích mọi hệ điều hành)
+        label_name = os.path.basename(os.path.dirname(img_path))
 
-        if label == "abnormal":
+        if label_name == "abnormal":
             label = 0
-        elif label == "normal":
+        elif label_name == "normal":
             label = 1
+        else:
+            raise ValueError(f"Không xác định được label từ đường dẫn: {img_path}")
 
         return img_transformed, label
+
+    # def __getitem__(self, idx):
+    #     img_path = self.file_list[idx]
+    #     img = Image.open(img_path)
+    #
+    #     img_transformed = self.transform(img, self.phase)
+    #
+    #     if self.phase == "train":
+    #         label = img_path.split("\\")[-2]
+    #         # print(f"label train:{label}")
+    #     elif self.phase == "val":
+    #         label = img_path.split("\\")[-2]
+    #     elif self.phase == "test":
+    #         label = img_path.split("\\")[-2]
+    #         # print(f"label train:{label}")
+    #
+    #     if label == "abnormal":
+    #         label = 0
+    #     elif label == "normal":
+    #         label = 1
+    #
+    #     return img_transformed, label
 
 # class MyDataset(data.Dataset):
 #     def __init__(self, file_list, transform=None, phase="train"):
